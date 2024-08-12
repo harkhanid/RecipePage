@@ -143,12 +143,14 @@ h1{
   font-family: var(--ff-young-serrif);
   font-size: var(--fs-700);
   color: var(--clr-stone-900);
+  font-weight: 700;
 }
 
 h2{
   font-family: var(--ff-young-serrif);
   font-size: var(--fs-600);
   color: var(--clr-brown-800);
+  font-weight: 700;
 }
 
 h3{
