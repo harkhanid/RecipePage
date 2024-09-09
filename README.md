@@ -18,8 +18,6 @@ This is a solution to the [Recipe page challenge on Frontend Mentor](https://www
 ### Screenshot
 
 ![Desktop view](image.png)
-![Mobile view](image-1.png)
-
 ### Links
 
 - Solution URL: [Solution URL](https://github.com/harkhanid/MortgageCalulator)
