@@ -10,7 +10,7 @@ MUST:Format your response in JSON with the following structure:
 {
   "title": [Recipe Title],
   "description": [2-3 sentence description of the recipe.],
-  "image": [search term 1, search term 2, search term 3],
+  "imageKeywords": [search term 1, search term 2, search term 3],
   "ingredients": [
     {
       "name": [Ingredient Name],

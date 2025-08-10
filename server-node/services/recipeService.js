@@ -12,12 +12,6 @@ const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_KEY,
 });
 
-console.log(unsplash);
-console.log(
-  "Unsplash API initialized with access key:",
-  process.env.UNSPLASH_ACCESS_KEY
-);
-
 export const createRecipe = async (ingredients) => {
   // --- Placeholder Logic ---
   if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) {
@@ -34,7 +28,7 @@ export const createRecipe = async (ingredients) => {
   }
   const receipeTitles = parsedResponse.image;
   const imageUrl = await generateImage(receipeTitles);
-  return { ...parsedResponse, image: imageUrl };
+  return { ...parsedResponse, imageUrl: imageUrl };
 };
 
 const generateImage = async (receipeTitles) => {
@@ -57,7 +51,12 @@ const generateImage = async (receipeTitles) => {
         return imageUrl;
       }
     } catch (error) {
-      console.error("Unsplash API error:", error.message);
+      console.error(
+        "Unsplash API error:",
+        error.message,
+        " ReceipeKeywords :",
+        receipeTitles
+      );
     }
   }
 };
