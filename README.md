@@ -27,11 +27,17 @@ This is a solution to the [Recipe page challenge on Frontend Mentor](https://www
 
 ## My process
 
+- Built Frontend from FrontendMentour Design
+- Developed Backend using express.js and Claude API and Unspash API
+- Intial Claude API call Duration is ~4 seconds
+
 ### Built with
 
 - Semantic HTML5 markup
 - CSS custom properties
 - Mobile-first workflow
+- Claude API
+- Unsplash API
 
 ### Useful resources
 
