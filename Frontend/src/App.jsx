@@ -3,12 +3,18 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { Receipe } from './pages/RecipePage'
+import { Ingredients } from './pages/Ingredients'
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
   const [status, setStatus] = useState('idle');
+
   const clearIngredients = () => {
     setIngredients([]);
+  }
+
+  const renderRecipe = () => {
+    setStatus('render');
   }
 
   const addIngredient = (ingredient) => {
@@ -18,11 +24,9 @@ function App() {
   return (
     <div className='container'>
     {status == 'idle' &&
-      <div>
-        <h1>Recipe Generator</h1>
-      </div>
+      <Ingredients ingredients={ingredients} addIngredient={addIngredient} renderRecipe={renderRecipe}/>
       }
-    {status == 'render' && <Receipe />}
+    {status == 'render' && <Receipe  ingredients={ingredients}/>}
     </div>
   )
 }

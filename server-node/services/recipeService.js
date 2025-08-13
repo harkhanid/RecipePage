@@ -22,11 +22,7 @@ export const createRecipe = async (ingredients) => {
     throw new Error("Invalid response from the recipe generation service.");
   }
   const parsedResponse = JSON.parse(response.content[0].text);
-  console.log("Parsed Recipe Response:", parsedResponse.image);
-  if (!parsedResponse.image || !Array.isArray(parsedResponse.image)) {
-    throw new Error("Invalid image data in the recipe response.");
-  }
-  const receipeTitles = parsedResponse.image;
+  const receipeTitles = parsedResponse.imageKeywords;
   const imageUrl = await generateImage(receipeTitles);
   return { ...parsedResponse, imageUrl: imageUrl };
 };
