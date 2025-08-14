@@ -29,7 +29,9 @@ This is a solution to the [Recipe page challenge on Frontend Mentor](https://www
 
 - Built Frontend from FrontendMentour Design
 - Developed Backend using express.js and Claude API and Unspash API
-- Intial Claude API call Duration is ~4 seconds
+- Intial Claude API call + Unsplash Duration is ~4 seconds.
+
+- Challenge: Images coming from Unsplash is not
 
 ### Built with
 

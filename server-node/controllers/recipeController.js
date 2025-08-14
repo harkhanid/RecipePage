@@ -1,7 +1,7 @@
 // This file contains the core logic for handling requests.
 
 import * as receipeService from "../services/recipeService.js";
-
+import { getCache, setCache } from "../cache.js";
 /**
  * Controller function to handle the recipe generation request.
  * It extracts data from the request and calls the appropriate service.
@@ -10,15 +10,25 @@ import * as receipeService from "../services/recipeService.js";
  */
 export const generateRecipe = async (req, res) => {
   try {
-    // 1. Get the ingredients from the request body
     const { ingredients } = req.body;
 
-    // 2. Call the service layer to handle the business logic
     santizeInput(ingredients);
+    const cached = getCache(ingredients);
+    if (cached) {
+      return res.status(200).json({
+        message: "Recipe fetched from cache successfully!",
+        result: {
+          recipe: cached,
+        },
+      });
+    }
     const recipe = await receipeService.createRecipe(ingredients);
+    setCache(ingredients, recipe, 600); // Cache for 10 minutes
     res.status(200).json({
       message: "Recipe generated successfully!",
-      recipe: recipe,
+      result: {
+        recipe: recipe,
+      },
     });
   } catch (error) {
     // 5. Handle any errors that occur

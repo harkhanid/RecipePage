@@ -10,7 +10,7 @@ MUST:Format your response in JSON with the following structure:
 {
   "title": [Recipe Title],
   "description": [2-3 sentence description of the recipe.],
-  "image": [search term 1, search term 2, search term 3],
+  "imageKeywords": [search term 1, search term 2, search term 3],
   "ingredients": [
     {
       "name": [Ingredient Name],
@@ -24,7 +24,7 @@ MUST:Format your response in JSON with the following structure:
     "prep": [Preparation time in minutes],
     "cook": [Cooking time in minutes]
   },
-  "instructions": [Array of step-by-step instructions],
+  "instructions": [{title:[2-3 word title for step], "description": [Detailed description of the step]}],
   "Nutrition": {
     "calories": [Calories per serving],
     "protein": [Protein content in grams],
