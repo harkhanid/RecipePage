@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Receipe } from './pages/RecipePage/RecipePage'
+import { WelcomePage } from './pages/WelcomePage/WelcomePage'
 import './App.css'
-import { Receipe } from './pages/RecipePage'
-import { Ingredients } from './pages/Ingredients'
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
@@ -12,7 +10,7 @@ function App() {
   const clearIngredients = () => {
     setIngredients([]);
   }
-
+  
   const renderRecipe = () => {
     setStatus('render');
   }
@@ -24,7 +22,7 @@ function App() {
   return (
     <div className='container'>
     {status == 'idle' &&
-      <Ingredients ingredients={ingredients} addIngredient={addIngredient} renderRecipe={renderRecipe}/>
+      <WelcomePage ingredients={ingredients} addIngredient={addIngredient} renderRecipe={renderRecipe}/>
       }
     {status == 'render' && <Receipe  ingredients={ingredients}/>}
     </div>

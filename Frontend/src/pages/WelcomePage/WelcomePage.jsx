@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { fetchRecipes } from '../services/recipeService';
+import HomeImage from '../../assets/home.jpg';
+import './WelcomePage.css';
 
-export const Ingredients = ({ingredients, addIngredient, renderRecipe}) => {
+export const WelcomePage = ({ingredients, addIngredient, renderRecipe}) => {
   const formSubmit = (formData) => {
     addIngredient(formData.get('ingredient'));
   }
@@ -13,14 +13,11 @@ export const Ingredients = ({ingredients, addIngredient, renderRecipe}) => {
       return;
     }
     renderRecipe();
-
-
   }
   return (
   <div>
     <div class="image-container">
-      <img src="https://unsplash.com/photos/robot-prepares-coffee-in-a-modern-kitchen-L-YcmaIrWQA" alt="Chef Robot" />
-    </div>
+    <img src={HomeImage} className="welcome_image" alt="Chef Robot" /> </div>
     <article class="flow-content">
       <div class="flow-content s-spacer">
         <h1>Welcome to AI Chef</h1>
@@ -29,8 +26,8 @@ export const Ingredients = ({ingredients, addIngredient, renderRecipe}) => {
           You can also add ingredients to your list and get a recipe based on those ingredients.
         </p>
       </div>
-      <div>
-        <form action={formSubmit}>
+      <div >
+        <form action={formSubmit} className="form-container">
           <input type="text" placeholder="Enter a ingredient" name='ingredient' />
           <button class="btn">Add Ingredient</button>
       </form>
@@ -44,7 +41,7 @@ export const Ingredients = ({ingredients, addIngredient, renderRecipe}) => {
         </ul>  
       </div>
       }
-      <button class="btn" onClick={() => {generateRecipe()}}>Get Recipe</button>
+      <button class="submit-button" onClick={() => {generateRecipe()}}>Generate Recipe</button>
     </article>
   </div>
   );

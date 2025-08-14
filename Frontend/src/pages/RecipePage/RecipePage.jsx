@@ -1,15 +1,6 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchRecipes } from '../../services/recipeService';
-import { useTypingEffect } from '../../services/typingTextService';
-import { TypedLine } from '../../components/TypedLine';
 import './RecipePage.css'; // Assuming you have a CSS file for styling
-
-
-const TypedHeader = ({ tag, text, start, onComplete }) => {
-  const TypedTag = tag || 'h2';
-  const typedText = useTypingEffect(text, 50, start, onComplete);
-  return start ? <TypedTag>{typedText}</TypedTag> : null;
-};
 
 export const Receipe = ({ingredients}) => {
   const [recipe, setRecipe] = useState({});
@@ -24,50 +15,8 @@ export const Receipe = ({ingredients}) => {
       .finally(() => setLoading(false));
   }, [ingredients]);
 
+  console.log('Recipe fetched:', recipe);
   
-  const [step, setStep] = useState(0);
-  const nextStep = useCallback(() => setStep(prev => prev + 1), []);
-
-
-  const typedTitle = useTypingEffect(recipe.title || "", 40, true, ()=>{setStartDescription(true)});
-
-  const typedDescription = useTypingEffect(
-    recipe.description || "",
-    20,
-    startDescription,
-    () => setStartPrepTime(true)
-  );
-
-  const prepTimeText = `
-  Total: Approximately ${recipe.preparation_time?.total ?? "—"} minutes,
-  Preparation: ${recipe.preparation_time?.prep ?? "—"} minutes,
-  Cooking: ${recipe.preparation_time?.cook ?? "—"} minutes.
-  `;
-
-  const typedPrepTime = useTypingEffect(prepTimeText, 20, startPrepTime, () => {
-    setStartIngredients(true);
-  });
-
-  // For ingredients, reveal one at a time sequentially *after* prep time finishes
-  const [typedIngredients, setTypedIngredients] = useState([]);
-  useEffect(() => {
-    if (!startIngredients || !recipe.ingredients?.length) {
-      setTypedIngredients([]);
-      return;
-    }
-
-    let index = 0;
-    setTypedIngredients([]);
-
-    const interval = setInterval(() => {
-      setTypedIngredients((prev) => [...prev, recipe.ingredients[index]]);
-      index++;
-      if (index >= recipe.ingredients.length) clearInterval(interval);
-    }, 300);
-
-    return () => clearInterval(interval);
-  }, [startIngredients, recipe.ingredients]);
-
   return (
  <div>
     <div class="image-container">
@@ -75,9 +24,9 @@ export const Receipe = ({ingredients}) => {
     </div>
     {!loading && (<article class="flow-content">
       <div class="flow-content s-spacer">
-        <h1>{typedTitle}</h1>
+        <h1>{recipe.title}</h1>
         <p>
-          {typedDescription}
+          {recipe.description || "No description available for this recipe."}
         </p>
       </div>
       <div class="card flow-content xs-spacer">
