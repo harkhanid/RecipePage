@@ -1,6 +1,6 @@
 // This file contains the core logic for handling requests.
 
-import * as receipeService from "../services/recipeService.js";
+import * as recipeService from "../services/recipeService.js";
 import { getCache, setCache } from "../cache.js";
 /**
  * Controller function to handle the recipe generation request.
@@ -11,9 +11,19 @@ import { getCache, setCache } from "../cache.js";
 export const generateRecipe = async (req, res) => {
   try {
     const { ingredients } = req.body;
+    const validInputResponse = await recipeService.sanitizeIngredients(
+      ingredients,
+      res
+    );
 
-    santizeInput(ingredients);
-    const cached = getCache(ingredients);
+    if (!validInputResponse.isValid) {
+      return res.status(400).json({
+        message: "Ingredients provided are not food or edible items.",
+        invalidItems: validInputResponse.invalidItems,
+      });
+    }
+    const validInput = validInputResponse.cleanIngredients;
+    const cached = getCache(validInput);
     if (cached) {
       return res.status(200).json({
         message: "Recipe fetched from cache successfully!",
@@ -22,8 +32,8 @@ export const generateRecipe = async (req, res) => {
         },
       });
     }
-    const recipe = await receipeService.createRecipe(ingredients);
-    setCache(ingredients, recipe, 600); // Cache for 10 minutes
+    const recipe = await recipeService.createRecipe(validInput);
+    setCache(validInput, recipe, 600); // Cache for 10 minutes
     res.status(200).json({
       message: "Recipe generated successfully!",
       result: {
@@ -37,14 +47,4 @@ export const generateRecipe = async (req, res) => {
       error: error.message,
     });
   }
-};
-
-const santizeInput = (ingredients) => {
-  ingredients = [...new Set(ingredients.map((i) => i.toLowerCase().trim()))];
-  ingredients = ingredients.filter((i) => i.length > 0);
-  // Limit to reasonable length (e.g., 15 items)
-  if (ingredients.length > 15) {
-    ingredients = ingredients.slice(0, 15);
-  }
-  return ingredients;
 };

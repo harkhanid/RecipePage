@@ -10,9 +10,6 @@ export function useTypingEffect(
   const prevTextRef = useRef(fullText);
   const counterRef = useRef(0);
   useEffect(() => {
-    console.log("1 useTypingEffect called with:", fullText, displayedText);
-  });
-  useEffect(() => {
     // Only restart if fullText changes or start flips
     if (!start || !fullText || prevTextRef.current === fullText) return;
 
@@ -25,9 +22,7 @@ export function useTypingEffect(
         if (prev.length < fullText.length)
           return prev + fullText.charAt(prev.length);
         else {
-          clearInterval(interval);
-          onComplete();
-          return prev;
+          return "";
         }
       });
     }, speed);

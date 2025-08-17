@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-const SYSTEM_PROMPT = `
+const RECIPE_GEN_PROMPT = `
 You are an assistant that receives a list of ingredients that a user has and suggests a recipe 
 they could make with some or all of those ingredients. You don't need to use every ingredient 
 they mention in your recipe. The recipe can include additional ingredients they didn't mention, 
@@ -33,6 +33,22 @@ MUST:Format your response in JSON with the following structure:
   },
 }`;
 
+const INGREDIENT_VALID_PROMPT = `
+You are an ingredient validator.
+Your task is to determine which items are real, edible food ingredients and which are not.
+Respond ONLY with a single, valid JSON object. Do not include any text, explanation, or markdown formatting before or after the JSON object.
+The JSON object must have the following structure:
+{
+  "isValid": boolean,
+  "cleanIngredients": string[],
+  "invalidItems": string[]
+}
+
+- "isValid" should be true if at least one valid food ingredient is found, otherwise false.
+- "cleanIngredients" must be an array containing ONLY the valid, edible food items from the original list.
+- "invalidItems" must be an array containing all the items that are not valid food ingredients.
+`;
+
 /**
  * Service function to create a recipe.
  * In a real application, this is where you would call the LLM API.
@@ -46,7 +62,7 @@ export const generateRecipe = async (ingredients) => {
     model: "claude-3-haiku-20240307",
     max_tokens: 1000,
     temperature: 1,
-    system: SYSTEM_PROMPT,
+    system: RECIPE_GEN_PROMPT,
     messages: [
       {
         role: "user",
@@ -56,6 +72,30 @@ export const generateRecipe = async (ingredients) => {
             text: `Here are some ingredients I have: ${ingredients.join(
               ", "
             )}. Can you suggest a recipe?`,
+          },
+        ],
+      },
+    ],
+  });
+  return msg;
+};
+
+export const validateIngredients = async (untrustedIngredients) => {
+  const anthropic = new Anthropic();
+  const msg = await anthropic.messages.create({
+    model: "claude-3-haiku-20240307",
+    max_tokens: 1000,
+    temperature: 1,
+    system: INGREDIENT_VALID_PROMPT,
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: `Here are some ingredients : ${untrustedIngredients.join(
+              ", "
+            )}. Can you identify if it is real,editable food or not?`,
           },
         ],
       },

@@ -3,45 +3,46 @@ import './WelcomePage.css';
 
 export const WelcomePage = ({ingredients, addIngredient, renderRecipe}) => {
   const formSubmit = (formData) => {
-    addIngredient(formData.get('ingredient'));
+    const ingredient = formData.get('ingredient').trim();
+    if (ingredient === ''|| ingredients.includes(ingredient)) {
+      return;
+    }
+    addIngredient(ingredient);
   }
 
   const generateRecipe = () => {
-    console.log("Generating recipe with ingredients:", ingredients);
-    if (ingredients.length < 0) {
-      alert('Please add at least 5 ingredients to get a recipe.');
-      return;
-    }
     renderRecipe();
   }
+
   return (
   <div>
-    <div class="image-container">
+    <div className="image-container">
     <img src={HomeImage} className="welcome_image" alt="Chef Robot" /> </div>
-    <article class="flow-content">
-      <div class="flow-content s-spacer">
+    <article className="flow-content">
+      <div className="flow-content s-spacer">
         <h1>Welcome to AI Chef</h1>
         <p>
-          This is a simple recipe application where you can find various recipes to cook. 
-          You can also add ingredients to your list and get a recipe based on those ingredients.
+          <b>AI Chef</b> is your personal recipe generator. It creates recipes based on the ingredients you have at home.
+          Just add at least 5 ingredients you have, and AI Chef will suggest a recipe for you.
         </p>
       </div>
       <div >
         <form action={formSubmit} className="form-container">
-          <input type="text" placeholder="Enter a ingredient" name='ingredient' />
-          <button class="btn">Add Ingredient</button>
+          <input type="text" placeholder="Ex. Rice" name='ingredient' />
+          <button className="btn">Add Ingredient</button>
       </form>
       </div>
-      {ingredients.length > 0 && <div class="flow-content s-spacer">
+      {ingredients.length > 0 && <div className="flow-content s-spacer">
         <h2>Ingredients</h2>
-        <ul class="flow-content xxs-spacer">
+        <ul className="flow-content xxs-spacer">
           {ingredients.map((ingredient, index) => (
             <li key={index}>{ingredient}</li>
           ))}
         </ul>  
       </div>
       }
-      <button class="submit-button" onClick={() => {generateRecipe()}}>Generate Recipe</button>
+      {ingredients.length >= 5 && 
+      <button type='button' className="submit-button" onClick={() => {generateRecipe()}}>Generate Recipe</button>}
     </article>
   </div>
   );

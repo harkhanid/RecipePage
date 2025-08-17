@@ -1,29 +1,16 @@
 import { useEffect, useState } from 'react';
-import { fetchRecipes } from '../../services/recipeService';
 import './RecipePage.css'; // Assuming you have a CSS file for styling
 
-export const Receipe = ({ingredients}) => {
-  const [recipe, setRecipe] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    fetchRecipes(ingredients)
-      .then((res)=>{
-        setRecipe(res.result.recipe)})
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [ingredients]);
-
-  console.log('Recipe fetched:', recipe);
-  
-  return (
+export const Receipe = ({ingredients, recipe}) => {
+    return (
  <div>
-    <div class="image-container">
-      <img src="./assets/images/image-omelette.jpeg" alt="omelette" />
-    </div>
-    {!loading && (<article class="flow-content">
-      <div class="flow-content s-spacer">
+    <div class="image-container xxs-spacer">
+      <img src={recipe.imageUrl} alt="omelette" className="recipe_image"/>
+      <button type='button' className="btn">&#8592; Back to Search</button>
+      </div>
+
+     <article class="flow-content">
+      <div className="flow-content s-spacer">
         <h1>{recipe.title}</h1>
         <p>
           {recipe.description || "No description available for this recipe."}
@@ -87,7 +74,7 @@ export const Receipe = ({ingredients}) => {
         </div>
       </div>
 
-    </article>)}
+    </article>
   </div>
   );
 }
