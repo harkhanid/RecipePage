@@ -1,30 +1,55 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Receipe } from './pages/RecipePage/RecipePage'
 import { WelcomePage } from './pages/WelcomePage/WelcomePage'
-import './App.css'
+import { fetchRecipes } from './services/recipeService';
+// import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+
+import './App.css';
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
   const [status, setStatus] = useState('idle');
+  const [recipe, setRecipe] = useState({});
+  const [error, setError] = useState(null);
 
-  const clearIngredients = () => {
-    setIngredients([]);
-  }
+  // const { executeRecaptcha } = useGoogleReCaptcha();
+  const renderRecipe = async() => {
+    // if (!executeRecaptcha) {
+    //   console.log('Execute recaptcha not yet available');
+    //   setResult('reCAPTCHA is not ready yet. Please try again in a moment.');
+    //   return;
+    // }
+    console.log('renderRecipe called with ingredients:', ingredients);
+    if (ingredients.length === 0) return;
+    setStatus('loading');
+    console.log('loading');
+    try{
+      // const token = await executeRecaptcha('recipeGeneration');
+      const res = await fetchRecipes(ingredients);
+        setRecipe(res.result.recipe);
+        setStatus('render');  
+      }
+      catch(err){
+        setError(err.message)
+        setStatus('idle');  
+      }
+  };
   
-  const renderRecipe = () => {
-    setStatus('render');
+  const addIngredient = (ingredient) => {
+    console.log('addIngredient called with:', ingredient)
+    setIngredients((prev)=>[...prev, ingredient]);
+    console.log('Current ingredients:', ingredients);
   }
 
-  const addIngredient = (ingredient) => {
-    setIngredients((prev)=>[...prev, ingredient]);
-  }
+  
 
   return (
     <div className='container'>
     {status == 'idle' &&
       <WelcomePage ingredients={ingredients} addIngredient={addIngredient} renderRecipe={renderRecipe}/>
       }
-    {status == 'render' && <Receipe  ingredients={ingredients}/>}
+    {status == 'loading' && <div className='loading'>Please wait while we create a recipe using {ingredients}. </div>}
+    {status == 'render' && <Receipe  ingredients={ingredients} recipe={recipe}/>}
     </div>
   )
 }

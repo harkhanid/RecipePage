@@ -10,8 +10,10 @@ export const fetchRecipes = async (ingredients) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ ingredients }),
+    body: JSON.stringify({
+      ingredients: ingredients,
+      // "g-recaptcha-response": token,
+    }),
   });
-
   return await response.json();
 };

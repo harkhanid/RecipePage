@@ -2,6 +2,7 @@
 
 import express from "express";
 import { generateRecipe } from "../controllers/recipeController.js";
+import { verifyRecaptcha } from "../middleware/middleware.js";
 
 const recipeRoutes = express.Router();
 

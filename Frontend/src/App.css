@@ -17,7 +17,7 @@
   --fs-700: 2rem;
 
   --ff-outfit: "Outfit";
-  --ff-young-serrif: "Young sariff";
+  --ff-young-serrif: "Young Serif", sans-serif;
 }
 
 
@@ -26,26 +26,6 @@
     --fs-700: 2.5rem;
   }
 }
-
-@font-face {
-  font-family: "Young sariff";
-  src: url(./assets/fonts/young-serif/YoungSerif-Regular.ttf);
-}
-
-@font-face {
-  font-family: "Outfit";
-  src:  url(./assets/fonts/outfit/Outfit-VariableFont_wght.ttf);
-        /* url(/assets//fonts/outfit/static/Outfit-Black.ttf),
-        url(/assets//fonts/outfit/static/Outfit-Bold.ttf),
-        url(/assets//fonts/outfit/static/Outfit-ExtraBold.ttf),
-        url(/assets//fonts/outfit/static/Outfit-ExtraLight.ttf),
-        url(/assets//fonts/outfit/static/Outfit-Light.ttf),
-        url(/assets//fonts/outfit/static/Outfit-Medium.ttf),
-        url(/assets//fonts/outfit/static/Outfit-Regular.ttf),
-        url(/assets//fonts/outfit/static/Outfit-SemiBold.ttf),
-        url(/assets//fonts/outfit/static/Outfit-Thin.ttf); */
-}
-
 
 *, *::before, *::after{
   box-sizing: border-box;
