@@ -8,6 +8,6 @@ const recipeRoutes = express.Router();
 
 // Define the route for generating a recipe.
 // POST /api/recipes/generate
-recipeRoutes.post("/generate", generateRecipe);
+recipeRoutes.post("/generate", verifyRecaptcha, generateRecipe);
 
 export default recipeRoutes;
