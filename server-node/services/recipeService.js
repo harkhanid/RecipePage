@@ -60,13 +60,6 @@ export const generateImage = async (receipeTitles) => {
         const imageUrl = unsplashResult.response.results[0].urls.regular;
         return imageUrl;
       }
-    } catch (error) {
-      console.error(
-        "Unsplash API error:",
-        error.message,
-        " ReceipeKeywords :",
-        receipeTitles
-      );
-    }
+    } catch (error) {}
   }
 };

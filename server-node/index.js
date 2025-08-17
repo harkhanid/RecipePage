@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 50, // Limit each IP to 5 requests per window (per hour)
+  max: 5, // Limit each IP to 5 requests per window (per hour)
   message: "You have exceeded the 5 requests in an hour limit!",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers

@@ -15,23 +15,11 @@
   outline-color: var(--clr-rose-800);
 }
 
-button {
-  min-width: 10rem;
-  padding-block: 0.2rem;
-  font-family: inherit;
-  border-radius: 0.3rem;
-  cursor: pointer;
-}
 
 .form-container > button {
   min-width: 10rem;
-  border: 2px solid var(--clr-rose-800);
-  background-color: var(--clr-stone-100);
-  color: var(--clr-rose-800);
-  font-family: inherit;
-  border-radius: 0.3rem;
-  cursor: pointer;
 }
+
 
 .submit-button {
   background-color: var(--clr-rose-800);

@@ -15,15 +15,11 @@ function App() {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const renderRecipe = async() => {
     if (!executeRecaptcha) {
-      console.log('Execute recaptcha not yet available');
       return;
     }
-    console.log('renderRecipe called with ingredients:', ingredients);
     if (ingredients.length === 0) return;
     setStatus('loading');
-    console.log('loading');
     try{
-      console.log("executeRecaptcha available?", !!executeRecaptcha);
       const token = await executeRecaptcha('recipeGeneration');
       console.log('reCAPTCHA token:', token);
       const res = await fetchRecipes(ingredients,token);
@@ -37,10 +33,14 @@ function App() {
   };
   
   const addIngredient = (ingredient) => {
-    console.log('addIngredient called with:', ingredient)
     setIngredients((prev)=>[...prev, ingredient]);
-    console.log('Current ingredients:', ingredients);
   }
+
+  const clearIngredients = useCallback(() => {
+    setIngredients([]);
+    setRecipe({});
+    setStatus('idle');
+  },[]);
 
   
 

@@ -3,7 +3,11 @@ import './WelcomePage.css';
 
 export const WelcomePage = ({ingredients, addIngredient, renderRecipe}) => {
   const formSubmit = (formData) => {
-    addIngredient(formData.get('ingredient'));
+    const ingredient = formData.get('ingredient').trim();
+    if (ingredient === ''|| ingredients.includes(ingredient)) {
+      return;
+    }
+    addIngredient(ingredient);
   }
 
   const generateRecipe = () => {
@@ -18,13 +22,13 @@ export const WelcomePage = ({ingredients, addIngredient, renderRecipe}) => {
       <div className="flow-content s-spacer">
         <h1>Welcome to AI Chef</h1>
         <p>
-          This is a simple recipe application where you can find various recipes to cook. 
-          You can also add ingredients to your list and get a recipe based on those ingredients.
+          <b>AI Chef</b> is your personal recipe generator. It creates recipes based on the ingredients you have at home.
+          Just add at least 5 ingredients you have, and AI Chef will suggest a recipe for you.
         </p>
       </div>
       <div >
         <form action={formSubmit} className="form-container">
-          <input type="text" placeholder="Please add atleast 5 ingredients" name='ingredient' />
+          <input type="text" placeholder="Ex. Rice" name='ingredient' />
           <button className="btn">Add Ingredient</button>
       </form>
       </div>

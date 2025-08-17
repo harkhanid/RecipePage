@@ -4,11 +4,13 @@ import './RecipePage.css'; // Assuming you have a CSS file for styling
 export const Receipe = ({ingredients, recipe}) => {
     return (
  <div>
-    <div class="image-container">
+    <div class="image-container xxs-spacer">
       <img src={recipe.imageUrl} alt="omelette" className="recipe_image"/>
-    </div>
+      <button type='button' className="btn">&#8592; Back to Search</button>
+      </div>
+
      <article class="flow-content">
-      <div class="flow-content s-spacer">
+      <div className="flow-content s-spacer">
         <h1>{recipe.title}</h1>
         <p>
           {recipe.description || "No description available for this recipe."}
