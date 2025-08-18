@@ -3,7 +3,7 @@ import "dotenv/config"; // Load environment variables from .env file
 
 import express from "express";
 import rateLimit from "express-rate-limit"; // Import the library
-import apiRoutes from "./routes/index.js"; // Import the main router
+import apiRoutes from "./src/routes/index.js"; // Import the main router
 
 // --- App Initialization ---
 const app = express();

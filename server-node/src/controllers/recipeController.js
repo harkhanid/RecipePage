@@ -1,7 +1,7 @@
 // This file contains the core logic for handling requests.
 
 import * as recipeService from "../services/recipeService.js";
-import { getCache, setCache } from "../cache.js";
+import { getCache, setCache } from "../utils/cache.js";
 /**
  * Controller function to handle the recipe generation request.
  * It extracts data from the request and calls the appropriate service.
@@ -15,13 +15,17 @@ export const generateRecipe = async (req, res) => {
       ingredients,
       res
     );
-
+    console.log("Controller INPUT: ", validInputResponse);
     if (!validInputResponse.isValid) {
       return res.status(400).json({
         message: "Ingredients provided are not food or edible items.",
         invalidItems: validInputResponse.invalidItems,
       });
     }
+    console.log(
+      "Controller VALID INPUT: ",
+      validInputResponse.cleanIngredients
+    );
     const validInput = validInputResponse.cleanIngredients;
     const cached = getCache(validInput);
     if (cached) {

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import './RecipePage.css'; // Assuming you have a CSS file for styling
 
-export const Receipe = ({ingredients, recipe}) => {
+export const Receipe = ({ingredients, recipe, clearIngredients}) => {
     return (
  <div>
     <div class="image-container xxs-spacer">
       <img src={recipe.imageUrl} alt="omelette" className="recipe_image"/>
-      <button type='button' className="btn">&#8592; Back to Search</button>
+      <button type='button' className="btn" onClick={clearIngredients}> &#8592; Back to Search</button>
       </div>
 
      <article class="flow-content">
@@ -73,7 +73,6 @@ export const Receipe = ({ingredients, recipe}) => {
           </div>
         </div>
       </div>
-
     </article>
   </div>
   );

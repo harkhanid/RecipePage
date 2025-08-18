@@ -1,3 +1,4 @@
+const MIN_INGREDIENTS = 5;
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 const RECAPTCHA_THRESHOLD = 0.5; // Adjust this threshold based on your needs
@@ -35,4 +36,31 @@ export const verifyRecaptcha = async (req, res, next) => {
       .status(500)
       .json({ message: "Server error during reCAPTCHA verification." });
   }
+};
+
+export const unsafeInputMiddleware = (req, res, next) => {
+  const ingredients = req.body.ingredients;
+
+  if (!ingredients || !Array.isArray(ingredients)) {
+    return res.status(400).json({ message: "Ingredients must be an array." });
+  }
+
+  const { safe, banned } = filterIngredients(ingredients);
+  if (safe.length < MIN_INGREDIENTS) {
+    return res.status(400).json({
+      message: `Please provide at least ${MIN_INGREDIENTS} valid ingredients.`,
+    });
+  }
+
+  if (banned.length > 0) {
+    console.warn(
+      `Unsafe ingredient attempt from IP: ${req.ip}, Ingredients: ${banned}`
+    );
+    return res.status(400).json({
+      message: "Unsafe ingredients detected.",
+      blockedItems: banned,
+    });
+  }
+  // Everything safe, proceed
+  next();
 };
