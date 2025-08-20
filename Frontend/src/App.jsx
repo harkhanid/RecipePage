@@ -23,11 +23,12 @@ function App() {
     try{
       const token = await executeRecaptcha('recipeGeneration');
       const res = await fetchRecipes(ingredients,token);
+        console.log(res);
         setRecipe(res.result.recipe);
         setStatus('render');  
       }
       catch(err){
-        setError(err.message);
+        setError(err);
         setIngredients([]);
         setStatus('idle');  
       }

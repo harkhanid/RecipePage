@@ -2,7 +2,7 @@
 import { CustomError } from "../utils/customError.js";
 import * as recipeService from "../services/recipeService.js";
 import { getCache, setCache } from "../utils/cache.js";
-
+import { logger } from "../utils/logger.js";
 /**
  * Controller function to handle the recipe generation request.
  * It extracts data from the request and calls the appropriate service.
@@ -12,17 +12,26 @@ import { getCache, setCache } from "../utils/cache.js";
 export const generateRecipe = async (req, res, next) => {
   try {
     const { ingredients } = req.body;
-    // const validInputResponse = await recipeService.sanitizeIngredients(
-    //   ingredients
-    // );
-    // if (!validInputResponse.isValid) {
-    //   throw new CustomError("Unsafe ingredients detected.", 400, {
-    //     blockedItems: validInputResponse.invalidItems,
-    //   });
-    // }
+    const validInputResponse = await recipeService.sanitizeIngredients(
+      req.requestId,
+      ingredients
+    );
+    if (!validInputResponse.isValid) {
+      logger.error(
+        { requestId: req.requestId },
+        `recipeController:Unsafe ingredient attempt, Ingredients: ${validInputResponse.invalidItems}`
+      );
+      throw new CustomError("Unsafe ingredients detected.", 400, {
+        blockedItems: validInputResponse.invalidItems,
+      });
+    }
 
-    // const validInput = validInputResponse.cleanIngredients;
-    const validInput = ingredients; // Assuming ingredients are already sanitized
+    const validInput = validInputResponse.cleanIngredients;
+    // const validInput = ingredients; // Assuming ingredients are already sanitized
+    logger.info(
+      { requestId: req.requestId, ingredients: ingredients },
+      "recipeController:generateRecipe::Valid:" + validInputResponse.isValid
+    );
     const cached = getCache(validInput);
 
     if (cached) {
@@ -33,7 +42,13 @@ export const generateRecipe = async (req, res, next) => {
         },
       });
     }
-    const recipe = await recipeService.createRecipe(validInput);
+    const recipe = await recipeService.createRecipe(validInput, req.requestId);
+
+    logger.info(
+      { requestId: req.requestId, ingredients: ingredients },
+      "recipeController:generateRecipe::Recipe generated successfully." +
+        recipe.title
+    );
     setCache(validInput, recipe, 600); // Cache for 10 minutes
     res.status(200).json({
       message: "Recipe generated successfully!",

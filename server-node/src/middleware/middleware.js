@@ -4,6 +4,7 @@ const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 const RECAPTCHA_THRESHOLD = 0.5; // Adjust this threshold based on your needs
 import { CustomError } from "../utils/customError.js";
 import { filterIngredients } from "../utils/safety.js";
+import { logger } from "../utils/logger.js";
 /**
  * Middleware to verify the Google reCAPTCHA token using native fetch.
  */
@@ -42,12 +43,23 @@ export const verifyRecaptcha = async (req, res, next) => {
 
 export const unsafeInputMiddleware = (req, res, next) => {
   const ingredients = req.body.ingredients;
-
+  console.log("Middleware:unsafeInputMiddleware::Ingredients:", ingredients);
   if (!ingredients || !Array.isArray(ingredients)) {
     throw new CustomError("Ingredients must be a non-empty array.", 400);
   }
 
   const { safe, banned } = filterIngredients(ingredients);
+  if (banned.length > 0) {
+    logger.error(
+      { requestId: req.requestId, ingredients: ingredients },
+      `Middleware:Unsafe ingredient attempt, Ingredients: ${banned}`
+    );
+    throw new CustomError(
+      `Unsafe ingredients detected: ${banned.join(", ")}`,
+      400
+    );
+  }
+
   if (safe.length < MIN_INGREDIENTS) {
     throw new CustomError(
       `Please provide at least ${MIN_INGREDIENTS} valid ingredients.`,
@@ -55,16 +67,6 @@ export const unsafeInputMiddleware = (req, res, next) => {
     );
   }
 
-  if (banned.length > 0) {
-    console.warn(
-      `Unsafe ingredient attempt from IP: ${req.ip}, Ingredients: ${banned}`
-    );
-
-    throw new CustomError(
-      `Unsafe ingredients detected: ${banned.join(", ")}`,
-      400
-    );
-  }
   // Everything safe, proceed
   req.body.ingredients = safe; // Normalize to only safe ingredients
   next();

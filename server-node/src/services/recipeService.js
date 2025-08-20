@@ -1,14 +1,16 @@
 import * as anthropicService from "./anthropicService.js";
+import { moderateText } from "./openAiService.js";
 import { recipeSchema } from "../schemas/recipeSchema.js";
 import { filterIngredients } from "../utils/safety.js";
 import { CustomError } from "../utils/customError.js";
 
 import { createApi } from "unsplash-js";
+import logger from "../utils/logger.js";
 const unsplash = createApi({
   accessKey: process.env.UNSPLASH_ACCESS_KEY,
 });
 
-export const createRecipe = async (ingredients, retries = 2) => {
+export const createRecipe = async (ingredients, requestId, retries = 2) => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       // -- Step 1: Generate Recipe ---
@@ -20,27 +22,28 @@ export const createRecipe = async (ingredients, retries = 2) => {
           502 // Bad Gateway, upstream failure
         );
       }
-      console.log(
-        `recipeService:CreateRecipe::Generated response: ${JSON.stringify(
-          response.content[0].text
-        )}`
+      const parsedResponse = recipeSchema.parse(
+        JSON.parse(response.content[0].text)
       );
-
-      const isUnsafe = await anthropicService.moderateText(
-        JSON.stringify(response.content[0].text)
-      );
+      const [isUnsafe, imageUrl] = await Promise.all([
+        moderateText(response.content[0].text),
+        generateImage(parsedResponse.imageKeywords, requestId),
+      ]);
       if (isUnsafe) {
+        logger.error(
+          { requestId: requestId, ingredients: ingredients },
+          `recipeService:createRecipe::Unsafe content detected: ${response.content[0].text}`
+        );
         throw new CustomError(
           "Generated recipe was flagged as unsafe. Try different ingredients.",
           422 // Unprocessable Entity
         );
       }
-      const parsedResponse = recipeSchema.parse(
-        JSON.parse(response.content[0].text)
-      );
-      const imageUrl = await generateImage(parsedResponse.imageKeywords);
       return { ...parsedResponse, imageUrl: imageUrl };
     } catch (error) {
+      logger.error(
+        `recipeService:CreateRecipe::Attempt ${attempt} failed: ${error}`
+      );
       if (attempt === retries) {
         throw new CustomError(
           `Failed to generate a valid recipe after ${retries} attempts`,
@@ -52,23 +55,21 @@ export const createRecipe = async (ingredients, retries = 2) => {
   }
 };
 
-export const sanitizeIngredients = async (ingredients) => {
+export const sanitizeIngredients = async (requestId, ingredients) => {
   // This service will validate the ingredients using LLM  and return a structured response.
   const validationResult = await anthropicService.validateIngredients(
     ingredients
   );
-  console.log(validationResult);
   if (!validationResult || !validationResult.content) {
     throw new CustomError(
       "Invalid response from the ingredient validation service.",
       502
     );
   }
-  console.log(validationResult.content[0].text);
   return JSON.parse(validationResult.content[0].text);
 };
 
-export const generateImage = async (receipeTitles) => {
+export const generateImage = async (receipeTitles, requestId) => {
   let imageFound = false;
   for (let title of receipeTitles) {
     try {
@@ -85,8 +86,11 @@ export const generateImage = async (receipeTitles) => {
         return imageUrl;
       }
     } catch (error) {
-      console.warn(
-        `recipeService:GenerateImage::Unsplash search failed for "${title}": ${error.message}`
+      logger.error(
+        {
+          requestId: requestId,
+          title: title,
+        }`recipeService:GenerateImage::Unsplash search failed for "${title}": ${error.message}`
       );
     }
   }

@@ -1,5 +1,5 @@
 export const errorHandler = (err, req, res, next) => {
-  console.error(`[${new Date().toISOString()}] ERROR:`, err);
+  // console.error(`[${new Date().toISOString()}] ERROR:`, err);
 
   if (err.isCustom) {
     return res.status(err.statusCode).json({
