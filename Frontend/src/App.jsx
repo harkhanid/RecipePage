@@ -10,10 +10,11 @@ function App() {
   const [ingredients, setIngredients] = useState([]);
   const [status, setStatus] = useState('idle');
   const [recipe, setRecipe] = useState({});
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const renderRecipe = async() => {
+  
+  const renderRecipe = useCallback( async() => {
     if (!executeRecaptcha) {
       return;
     }
@@ -21,20 +22,21 @@ function App() {
     setStatus('loading');
     try{
       const token = await executeRecaptcha('recipeGeneration');
-      console.log('reCAPTCHA token:', token);
       const res = await fetchRecipes(ingredients,token);
+        console.log(res);
         setRecipe(res.result.recipe);
         setStatus('render');  
       }
       catch(err){
-        setError(err.message)
+        setError(err);
+        setIngredients([]);
         setStatus('idle');  
       }
-  };
+  },[executeRecaptcha, ingredients]);
   
-  const addIngredient = (ingredient) => {
+  const addIngredient = useCallback((ingredient) => {
     setIngredients((prev)=>[...prev, ingredient]);
-  }
+  },[]);
 
   const clearIngredients = useCallback(() => {
     setIngredients([]);
@@ -47,10 +49,12 @@ function App() {
   return (
     <div className='container'>
     {status == 'idle' &&
-      <WelcomePage ingredients={ingredients} addIngredient={addIngredient} renderRecipe={renderRecipe}/>
+      <WelcomePage ingredients={ingredients} addIngredient={addIngredient} renderRecipe={renderRecipe} setError={setError} error={error}/>
       }
-    {status == 'loading' && <div className='loading'>Please wait while we create a recipe using {ingredients}. </div>}
-    {status == 'render' && <Receipe  ingredients={ingredients} recipe={recipe}/>}
+    {status == 'loading' && <article className="flow-content">
+      <div className='loading'>
+        <h1>AI Chef is creating recipe for {ingredients.join(", ")}. Please wait...</h1></div></article>}
+    {status == 'render' && <Receipe  ingredients={ingredients} recipe={recipe} clearIngredients={clearIngredients}/>}
     </div>
   )
 }

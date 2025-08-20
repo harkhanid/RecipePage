@@ -11,5 +11,9 @@ export const fetchRecipes = async (ingredients, token) => {
       "g-recaptcha-response": token,
     }),
   });
-  return await response.json();
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch recipe");
+  }
+  return data;
 };

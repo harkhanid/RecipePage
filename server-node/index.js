@@ -3,7 +3,9 @@ import "dotenv/config"; // Load environment variables from .env file
 
 import express from "express";
 import rateLimit from "express-rate-limit"; // Import the library
-import apiRoutes from "./routes/index.js"; // Import the main router
+import apiRoutes from "./src/routes/index.js"; // Import the main router
+import { errorHandler } from "./src/middleware/errorHandler.js";
+import { requestIdMiddleware } from "./src/middleware/requestId.js";
 
 // --- App Initialization ---
 const app = express();
@@ -23,9 +25,12 @@ app.use("/api", limiter);
 // Parses incoming JSON payloads
 app.use(express.json());
 
+app.use(requestIdMiddleware);
+
 // --- Routes ---
 // The main entry point for all API routes
 app.use("/api", apiRoutes);
+app.use(errorHandler);
 
 // A simple root route to confirm the server is running
 app.get("/", (req, res) => {

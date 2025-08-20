@@ -84,3 +84,5 @@ pids/
 # VSCode extensions file (keep extensions.json but ignore everything else)
 .vscode/*
 !.vscode/extensions.json
+
+src/config/prompts.js

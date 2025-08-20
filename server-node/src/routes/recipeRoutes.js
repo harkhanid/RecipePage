@@ -2,12 +2,20 @@
 
 import express from "express";
 import { generateRecipe } from "../controllers/recipeController.js";
-import { verifyRecaptcha } from "../middleware/middleware.js";
+import {
+  verifyRecaptcha,
+  unsafeInputMiddleware,
+} from "../middleware/middleware.js";
 
 const recipeRoutes = express.Router();
 
 // Define the route for generating a recipe.
 // POST /api/recipes/generate
-recipeRoutes.post("/generate", verifyRecaptcha, generateRecipe);
+recipeRoutes.post(
+  "/generate",
+  verifyRecaptcha,
+  unsafeInputMiddleware,
+  generateRecipe
+);
 
 export default recipeRoutes;
