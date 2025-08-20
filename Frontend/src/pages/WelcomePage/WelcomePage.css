@@ -40,3 +40,9 @@
   object-fit: cover;
   object-position: 10% 60%;
 }
+
+.error-message{
+  color: var(--clr-rose-800);
+  font-size: var(--fs-500);
+  margin-top: 0.5rem;
+}

@@ -1,7 +1,7 @@
 import HomeImage from '../../assets/home.jpg';
 import './WelcomePage.css';
 
-export const WelcomePage = ({ingredients, addIngredient, renderRecipe}) => {
+export const WelcomePage = ({ingredients, addIngredient, renderRecipe, setError,error}) => {
   const formSubmit = (formData) => {
     const ingredient = formData.get('ingredient').trim();
     if (ingredient === ''|| ingredients.includes(ingredient)) {
@@ -12,6 +12,10 @@ export const WelcomePage = ({ingredients, addIngredient, renderRecipe}) => {
 
   const generateRecipe = () => {
     renderRecipe();
+  }
+
+  const handleError = () => {
+    if(error) setError("");
   }
 
   return (
@@ -26,11 +30,12 @@ export const WelcomePage = ({ingredients, addIngredient, renderRecipe}) => {
           Just add at least 5 ingredients you have, and AI Chef will suggest a recipe for you.
         </p>
       </div>
-      <div >
+      <div>
         <form action={formSubmit} className="form-container">
-          <input type="text" placeholder="Ex. Rice" name='ingredient' />
+          <input type="text" placeholder="Ex. Rice" name='ingredient' onKeyDown={handleError} />
           <button className="btn">Add Ingredient</button>
-      </form>
+        </form>
+        {error.length > 0 && <div className="error-message">{error}</div>}
       </div>
       {ingredients.length > 0 && <div className="flow-content s-spacer">
         <h2>Ingredients</h2>
@@ -41,8 +46,11 @@ export const WelcomePage = ({ingredients, addIngredient, renderRecipe}) => {
         </ul>  
       </div>
       }
+      <div>     
       {ingredients.length >= 5 && 
       <button type='button' className="submit-button" onClick={() => {generateRecipe()}}>Generate Recipe</button>}
+      </div>
+
     </article>
   </div>
   );

@@ -6,12 +6,15 @@ const BANNED_WORDS = JSON.parse(
     '["poison","bomb","explosive","gun","knife","hate","kill","assault","drugs","terror","attack","radiation","virus","fire","arson","weapon","acid","threat","nuclear","bullet","gunpowder","violence","hazard","cyanide","arsenic","chemical","explosive device","toxins","illegal","smoke","firearms","molotov","knife attack","sabotage","bombing","toxic","corrosive","danger","weaponry","hostile","hazardous","attack plan","bioweapon","dangerous substance","harmful"]'
 );
 
+const sanitizeString = (str) =>
+  str.replace(/[\u0000-\u001F\u007F]/g, "").trim();
 /**
  * Checks if an ingredient is safe.
  * @param {string} ingredient
  * @returns {boolean} true if safe, false if banned
  */
-export const isIngredientSafe = (ingredient) => {
+
+const isIngredientSafe = (ingredient) => {
   const lower = ingredient.toLowerCase().trim();
   return !BANNED_WORDS.some((word) => lower.includes(word));
 };
@@ -25,9 +28,6 @@ export const filterIngredients = (ingredients) => {
   const safe = [];
   const banned = [];
 
-  if (!ingredients || !Array.isArray(ingredients)) {
-    return { safe, banned };
-  }
   // Normalize, sanitize, deduplicate
   const cleaned = [
     ...new Set(
@@ -46,6 +46,5 @@ export const filterIngredients = (ingredients) => {
       banned.push(ing);
     }
   }
-
   return { safe, banned };
 };
