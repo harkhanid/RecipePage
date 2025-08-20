@@ -10,6 +10,21 @@ import { requestIdMiddleware } from "./src/middleware/requestId.js";
 // --- App Initialization ---
 const app = express();
 const PORT = process.env.PORT || 3000;
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",");
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+  })
+);
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -18,14 +33,12 @@ const limiter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-
 // Apply the rate limiting middleware to your API routes
+app.use(express.json());
+app.use(requestIdMiddleware);
 app.use("/api", limiter);
 // --- Middleware ---
 // Parses incoming JSON payloads
-app.use(express.json());
-
-app.use(requestIdMiddleware);
 
 // --- Routes ---
 // The main entry point for all API routes
