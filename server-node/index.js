@@ -1,12 +1,12 @@
 // --- Imports ---
 import "dotenv/config"; // Load environment variables from .env file
-
 import express from "express";
+import cors from "cors";
+
 import rateLimit from "express-rate-limit"; // Import the library
 import apiRoutes from "./src/routes/index.js"; // Import the main router
 import { errorHandler } from "./src/middleware/errorHandler.js";
 import { requestIdMiddleware } from "./src/middleware/requestId.js";
-
 // --- App Initialization ---
 const app = express();
 const PORT = process.env.PORT || 3000;
