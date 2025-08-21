@@ -10,6 +10,7 @@ import { requestIdMiddleware } from "./src/middleware/requestId.js";
 // --- App Initialization ---
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set("trust proxy", 1); // Trust the first proxy (for Heroku or similar environments)
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",");
 
 app.use(
